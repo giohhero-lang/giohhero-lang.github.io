@@ -404,7 +404,7 @@ function createObstacle(x, type, difficulty) {
     case 'moving':
       mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 3), obsMat);
       mesh.position.set(x, 6, 0);
-      mesh.userData.moveSpeed = 2 + difficulty * 3;
+      mesh.userData.moveSpeed = 1 + difficulty * 2;
       mesh.userData.moveRange = TRACK_WIDTH / 2 - 2;
       mesh.userData.moving = true;
       break;
