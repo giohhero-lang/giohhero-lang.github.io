@@ -2,61 +2,704 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Welcome - ai10x</title>
+<title>Speed Obby - Ultimate Edition</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
+  body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    background: #000;
+  }
+  canvas { display: block; }
+  
+  #startScreen {
+    position: absolute;
+    inset: 0;
     background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    z-index: 100;
   }
-  .container {
+  
+  .startContent {
     text-align: center;
-    padding: 40px;
+    color: #fff;
     max-width: 600px;
+    padding: 40px;
+    background: rgba(0,0,0,0.7);
+    border: 3px solid #00ff88;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(0,255,136,0.3);
   }
-  h1 {
+  
+  .startContent h1 {
+    font-size: 56px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #00ff88, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(0,255,136,0.5);
+  }
+  
+  .startContent p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #aaa;
+  }
+  
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+    text-align: left;
+  }
+  
+  .control {
+    background: rgba(0,255,136,0.1);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,255,136,0.3);
+  }
+  
+  .control strong {
+    color: #00ff88;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  #startBtn {
+    background: linear-gradient(90deg, #00ff88, #00ffff);
+    color: #000;
+    border: none;
+    padding: 18px 60px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    margin-top: 20px;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(0,255,136,0.5);
+  }
+  
+  #startBtn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(0,255,136,0.8);
+  }
+  
+  #ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.85);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #00ff88;
+    color: #fff;
+    min-width: 250px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+  
+  .stat {
+    margin: 12px 0;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .stat-label {
+    color: #888;
+    font-weight: 500;
+  }
+  
+  .stat-value {
+    color: #00ff88;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  #timer {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0,255,255,0.5);
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00ffff);
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  
+  #checkpoint {
+    background: rgba(0,255,136,0.2);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+    text-align: center;
+    border: 1px solid rgba(0,255,136,0.4);
+  }
+  
+  #msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
     font-size: 48px;
+    text-align: center;
+    display: none;
+    background: rgba(0,0,0,0.9);
+    padding: 40px 60px;
+    border: 4px solid #00ff88;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0,255,136,0.5);
+  }
+  
+  #msg h2 {
     margin-bottom: 20px;
     background: linear-gradient(90deg, #00ff88, #00ffff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  p {
-    font-size: 18px;
+  
+  #msg p {
+    font-size: 24px;
     color: #aaa;
-    margin-bottom: 30px;
+    margin-top: 10px;
   }
-  a {
-    display: inline-block;
-    background: linear-gradient(90deg, #00ff88, #00ffff);
-    color: #000;
-    padding: 15px 40px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 18px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 20px rgba(0,255,136,0.5);
-  }
-  a:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 40px rgba(0,255,136,0.8);
+  
+  .hidden { display: none !important; }
+  
+  #hitEffect {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,0,0,0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Welcome to ai10x</h1>
-  <p>Check out my Speed Obby game - a fast-paced obstacle course challenge!</p>
-  <a href="game.html">Play Speed Obby</a>
+<div id="startScreen">
+  <div class="startContent">
+    <h1>⚡ SPEED OBBY ⚡</h1>
+    <p>Race through 10,000m of increasingly difficult obstacles. Speed and jump grow +1 every 35m!</p>
+    
+    <div class="controls">
+      <div class="control">
+        <strong>W / ↑</strong>
+        <span>Accelerate Forward</span>
+      </div>
+      <div class="control">
+        <strong>S / ↓</strong>
+        <span>Brake / Reverse</span>
+      </div>
+      <div class="control">
+        <strong>A / ←</strong>
+        <span>Steer Left</span>
+      </div>
+      <div class="control">
+        <strong>D / →</strong>
+        <span>Steer Right</span>
+      </div>
+      <div class="control">
+        <strong>SPACE</strong>
+        <span>Jump</span>
+      </div>
+      <div class="control">
+        <strong>R</strong>
+        <span>Reset to Checkpoint</span>
+      </div>
+    </div>
+    
+    <button id="startBtn">START GAME</button>
+  </div>
 </div>
 
+<div id="ui" class="hidden">
+  <div id="timer">0.00s</div>
+  <div class="stat">
+    <span class="stat-label">Speed</span>
+    <span class="stat-value"><span id="sVal">15</span></span>
+  </div>
+  <div class="progress-bar">
+    <div id="speedBar" class="progress-fill" style="width: 15%"></div>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Jump</span>
+    <span class="stat-value"><span id="jVal">15</span></span>
+  </div>
+  <div class="stat">
+    <span class="stat-label">Distance</span>
+    <span class="stat-value"><span id="dVal">0</span> / 10000m</span>
+  </div>
+  <div class="progress-bar">
+    <div id="distBar" class="progress-fill" style="width: 0%"></div>
+  </div>
+  <div id="checkpoint">Checkpoint: Start</div>
+</div>
+
+<div id="msg">
+  <h2>🏆 FINISH! 🏆</h2>
+  <p id="finalTime"></p>
+  <p style="font-size: 18px; margin-top: 20px;">Press R to restart</p>
+</div>
+
+<div id="hitEffect"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// === GAME STATE ===
+let gameStarted = false;
+let gameFinished = false;
+let startTime = 0;
+
+// === SCENE SETUP ===
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a0a);
+scene.fog = new THREE.Fog(0x0a0a0a, 20, 200);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+// === LIGHTING ===
+const ambient = new THREE.AmbientLight(0x404040, 0.8);
+scene.add(ambient);
+
+const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+mainLight.position.set(50, 100, 50);
+mainLight.castShadow = true;
+mainLight.shadow.camera.left = -50;
+mainLight.shadow.camera.right = 50;
+mainLight.shadow.camera.top = 50;
+mainLight.shadow.camera.bottom = -50;
+scene.add(mainLight);
+
+const playerLight = new THREE.PointLight(0x00ff88, 1, 20);
+playerLight.castShadow = true;
+scene.add(playerLight);
+
+// === PLAYER ===
+const playerGeo = new THREE.BoxGeometry(1, 1, 1);
+const playerMat = new THREE.MeshStandardMaterial({ 
+  color: 0x00ff88,
+  emissive: 0x00ff88,
+  emissiveIntensity: 0.3,
+  metalness: 0.8,
+  roughness: 0.2
+});
+const player = new THREE.Mesh(playerGeo, playerMat);
+player.position.set(0, 0.5, 0);
+player.castShadow = true;
+scene.add(player);
+
+const wallHeight = 20;
+
+// === PLAYER STATE ===
+const pState = {
+  vel: new THREE.Vector3(),
+  speed: 20,
+  jump: 20,
+  maxSpeed: 100,
+  maxJump: wallHeight - 1,
+  onGround: false,
+  checkpoint: new THREE.Vector3(0, 0.5, 0),
+  checkpointDist: 0,
+  canJump: true
+};
+
+// Camera state
+const camState = {
+  currentPos: new THREE.Vector3(-15, 8, 0),
+  currentLook: new THREE.Vector3(8, 0, 0),
+  shake: 0
+};
+
+// === WORLD BUILDING ===
+const TRACK_LENGTH = 10000;
+const TRACK_WIDTH = 14;
+
+// Floor segments
+const floorMat = new THREE.MeshStandardMaterial({ 
+  color: 0x1a1a1a,
+  metalness: 0.3,
+  roughness: 0.7
+});
+
+for(let x = -50; x < TRACK_LENGTH + 100; x += 100) {
+  const floor = new THREE.Mesh(
+    new THREE.BoxGeometry(100, 1, TRACK_WIDTH),
+    floorMat
+  );
+  floor.position.set(x, -0.5, 0);
+  floor.receiveShadow = true;
+  scene.add(floor);
+}
+
+// Walls
+const wallMat = new THREE.MeshStandardMaterial({
+  color: 0x003322,
+  transparent: true,
+  opacity: 0.4,
+  metalness: 0.5
+});
+
+for(let x = -50; x < TRACK_LENGTH + 100; x += 100) {
+  const w1 = new THREE.Mesh(new THREE.BoxGeometry(100, wallHeight, 0.5), wallMat);
+  w1.position.set(x, wallHeight/2, TRACK_WIDTH/2);
+  scene.add(w1);
+  
+  const w2 = new THREE.Mesh(new THREE.BoxGeometry(100, wallHeight, 0.5), wallMat);
+  w2.position.set(x, wallHeight/2, -TRACK_WIDTH/2);
+  scene.add(w2);
+}
+
+// === OBSTACLES ===
+const obstacles = [];
+const obstacleMeshes = [];
+const checkpoints = [0];
+
+function createObstacle(x, type, difficulty) {
+  const obsMat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color().setHSL(0, 0.8, 0.3 + difficulty * 0.2),
+    emissive: 0xff0000,
+    emissiveIntensity: 0.1 + difficulty * 0.2,
+    metalness: 0.6,
+    roughness: 0.4
+  });
+  
+  let mesh;
+  
+  switch(type) {
+    case 'tall':
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 3 + difficulty * 2, 2), obsMat);
+      mesh.position.set(x, 1.5 + difficulty * 1, (Math.random() - 0.5) * (TRACK_WIDTH - 4));
+      break;
+    case 'wide':
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(3, 4, TRACK_WIDTH * (0.6 + difficulty * 0.2)), obsMat);
+      mesh.position.set(x, 2, 0);
+      break;
+    case 'moving':
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 3), obsMat);
+      mesh.position.set(x, 6, 0);
+      mesh.userData.moveSpeed = 2 + difficulty * 3;
+      mesh.userData.moveRange = TRACK_WIDTH / 2 - 2;
+      mesh.userData.moving = true;
+      break;
+    case 'gap':
+      const gap = 4 + difficulty * 4;
+      const g1 = new THREE.Mesh(new THREE.BoxGeometry(3, 4, TRACK_WIDTH), obsMat);
+      g1.position.set(x - gap/2, 2, 0);
+      g1.castShadow = true;
+      g1.receiveShadow = true;
+      scene.add(g1);
+      obstacles.push(new THREE.Box3().setFromObject(g1));
+      obstacleMeshes.push(g1);
+      
+      mesh = new THREE.Mesh(new THREE.BoxGeometry(3, 4, TRACK_WIDTH), obsMat);
+      mesh.position.set(x + gap/2, 2, 0);
+      break;
+    case 'slalom':
+      for(let i = 0; i < 3; i++) {
+        const side = i % 2 === 0 ? 1 : -1;
+        const s = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 3), obsMat);
+        s.position.set(x + i * 10, 3, side * (TRACK_WIDTH/2 - 2));
+        scene.add(s);
+        obstacles.push(new THREE.Box3().setFromObject(s));
+        obstacleMeshes.push(s);
+      }
+      return;
+  }
+  
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  obstacles.push(new THREE.Box3().setFromObject(mesh));
+  obstacleMeshes.push(mesh);
+}
+
+// Generate obstacles
+const types = ['tall', 'wide', 'moving', 'gap', 'slalom'];
+for(let x = 80; x < TRACK_LENGTH; x += 35) {
+  const progress = x / TRACK_LENGTH;
+  const difficulty = Math.min(progress * 1.5, 1);
+  
+  if(x % 500 < 35 && x > 100) {
+    checkpoints.push(x);
+  }
+  
+  if(checkpoints.some(cp => Math.abs(x - cp) < 50)) continue;
+  
+  const type = types[Math.floor(Math.random() * types.length)];
+  createObstacle(x, type, difficulty);
+  
+  if(difficulty > 0.6 && Math.random() > 0.7) {
+    x += 20;
+    const type2 = types[Math.floor(Math.random() * types.length)];
+    createObstacle(x, type2, difficulty);
+  }
+}
+
+// Finish platform
+const finishGeo = new THREE.BoxGeometry(30, 2, TRACK_WIDTH);
+const finishMat = new THREE.MeshStandardMaterial({
+  color: 0x00ff88,
+  emissive: 0x00ff88,
+  emissiveIntensity: 0.5,
+  metalness: 0.8,
+  roughness: 0.2
+});
+const finishPlatform = new THREE.Mesh(finishGeo, finishMat);
+finishPlatform.position.set(TRACK_LENGTH + 15, 0, 0);
+finishPlatform.receiveShadow = true;
+scene.add(finishPlatform);
+
+// === INPUT ===
+const keys = {};
+window.addEventListener('keydown', (e) => {
+  keys[e.code] = true;
+  if(e.code === 'KeyR' && gameStarted) {
+    if(gameFinished) {
+      location.reload();
+    } else {
+      resetToCheckpoint();
+    }
+  }
+});
+window.addEventListener('keyup', (e) => keys[e.code] = false);
+
+// === START GAME ===
+document.getElementById('startBtn').addEventListener('click', () => {
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('ui').classList.remove('hidden');
+  gameStarted = true;
+  startTime = Date.now();
+});
+
+// === CHECKPOINT SYSTEM ===
+function resetToCheckpoint() {
+  player.position.copy(pState.checkpoint);
+  pState.vel.set(0, 0, 0);
+  
+  const hitEl = document.getElementById('hitEffect');
+  hitEl.style.opacity = '0.5';
+  setTimeout(() => hitEl.style.opacity = '0', 200);
+}
+
+function updateCheckpoint(x) {
+  for(let i = checkpoints.length - 1; i >= 0; i--) {
+    if(x >= checkpoints[i] && checkpoints[i] > pState.checkpointDist) {
+      pState.checkpoint.set(checkpoints[i], 0.5, 0);
+      pState.checkpointDist = checkpoints[i];
+      document.getElementById('checkpoint').innerText = 
+        `Checkpoint: ${Math.floor(checkpoints[i])}m`;
+      document.getElementById('checkpoint').style.background = 'rgba(0,255,136,0.4)';
+      setTimeout(() => {
+        document.getElementById('checkpoint').style.background = 'rgba(0,255,136,0.2)';
+      }, 300);
+      break;
+    }
+  }
+}
+
+// === GAME LOOP ===
+function loop() {
+  requestAnimationFrame(loop);
+  
+  if(!gameStarted || gameFinished) {
+    renderer.render(scene, camera);
+    return;
+  }
+  
+  // Update timer
+  const elapsed = (Date.now() - startTime) / 1000;
+  document.getElementById('timer').innerText = elapsed.toFixed(2) + 's';
+  
+  // === INPUT ===
+  if(keys['KeyW'] || keys['ArrowUp']) {
+    pState.vel.x = Math.min(pState.vel.x + pState.speed * 0.016, pState.maxSpeed * 0.016);
+  } else if(keys['KeyS'] || keys['ArrowDown']) {
+    pState.vel.x = Math.max(pState.vel.x - pState.speed * 0.008, -pState.maxSpeed * 0.008);
+  } else {
+    pState.vel.x *= 0.92;
+  }
+  
+  const steerPower = Math.min(25, pState.speed * 0.3);
+  if(keys['KeyA'] || keys['ArrowLeft']) {
+    pState.vel.z = Math.max(pState.vel.z - steerPower * 0.016, -steerPower * 0.016);
+  } else if(keys['KeyD'] || keys['ArrowRight']) {
+    pState.vel.z = Math.min(pState.vel.z + steerPower * 0.016, steerPower * 0.016);
+  } else {
+    pState.vel.z *= 0.85;
+  }
+  
+  // Jump
+  if((keys['Space']) && player.position.y <= 0.51) {
+    pState.vel.y = pState.jump * 0.025;
+  }
+  
+  // Gravity
+  pState.vel.y -= 0.6 * 0.016;
+  
+  // Move - velocity is per frame
+  const nextPos = player.position.clone().add(pState.vel);
+  
+  // Floor
+  if(nextPos.y < 0.5) {
+    nextPos.y = 0.5;
+    pState.vel.y = 0;
+    pState.onGround = true;
+  } else {
+    pState.onGround = false;
+  }
+  
+  // Ceiling
+  if(nextPos.y > wallHeight - 0.5) {
+    nextPos.y = wallHeight - 0.5;
+    pState.vel.y = 0;
+  }
+  
+  // Walls
+  if(nextPos.z > TRACK_WIDTH/2 - 0.5) {
+    nextPos.z = TRACK_WIDTH/2 - 0.5;
+    pState.vel.z = 0;
+  }
+  if(nextPos.z < -TRACK_WIDTH/2 + 0.5) {
+    nextPos.z = -TRACK_WIDTH/2 + 0.5;
+    pState.vel.z = 0;
+  }
+  
+  // Void check
+  if(nextPos.x < -10) {
+    resetToCheckpoint();
+    return;
+  }
+  
+  // === COLLISION ===
+  const pBox = new THREE.Box3().setFromCenterAndSize(
+    nextPos,
+    new THREE.Vector3(0.9, 0.9, 0.9)
+  );
+  
+  let hit = false;
+  for(let i = 0; i < obstacles.length; i++) {
+    if(pBox.intersectsBox(obstacles[i])) {
+      hit = true;
+      break;
+    }
+  }
+  
+  if(hit) {
+    resetToCheckpoint();
+    camState.shake = 0.5;
+    return;
+  }
+  
+  player.position.copy(nextPos);
+  
+  // === PROGRESSION ===
+  const dist = player.position.x;
+  const progress = Math.min(dist / TRACK_LENGTH, 1);
+  
+  // Speed and Jump: +1 per 35m
+  pState.speed = Math.min(15 + Math.floor(dist / 35), pState.maxSpeed);
+  pState.jump = Math.min(15 + Math.floor(dist / 35), pState.maxJump);
+  
+  // Update UI
+  document.getElementById('sVal').innerText = Math.floor(pState.speed);
+  document.getElementById('jVal').innerText = Math.floor(pState.jump);
+  document.getElementById('dVal').innerText = Math.floor(dist);
+  document.getElementById('speedBar').style.width = (pState.speed / pState.maxSpeed * 100) + '%';
+  document.getElementById('distBar').style.width = (progress * 100) + '%';
+  
+  // Checkpoint system
+  updateCheckpoint(dist);
+  
+  // === FINISH ===
+  if(dist >= TRACK_LENGTH && !gameFinished) {
+    gameFinished = true;
+    const finalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+    document.getElementById('finalTime').innerText = `Time: ${finalTime}s`;
+    document.getElementById('msg').style.display = 'block';
+  }
+  
+  // === MOVING OBSTACLES ===
+  for(let i = 0; i < obstacleMeshes.length; i++) {
+    const mesh = obstacleMeshes[i];
+    if(mesh.userData.moving) {
+      const t = Date.now() / 1000;
+      mesh.position.z = Math.sin(t * mesh.userData.moveSpeed) * mesh.userData.moveRange;
+      obstacles[i] = new THREE.Box3().setFromObject(mesh);
+    }
+  }
+  
+  // === DYNAMIC CAMERA ===
+  camState.shake *= 0.9;
+  
+  const speedFactor = pState.speed / pState.maxSpeed;
+  const targetOffset = new THREE.Vector3(
+    -15 - speedFactor * 5,
+    8 - speedFactor * 2,
+    0
+  );
+  const targetLook = new THREE.Vector3(
+    8 + speedFactor * 10,
+    0,
+    0
+  );
+  
+  camState.currentPos.lerp(targetOffset, 0.03);
+  camState.currentLook.lerp(targetLook, 0.03);
+  
+  const camPos = player.position.clone().add(camState.currentPos);
+  camPos.x += (Math.random() - 0.5) * camState.shake;
+  camPos.y += (Math.random() - 0.5) * camState.shake;
+  
+  const lookTarget = player.position.clone().add(camState.currentLook);
+  
+  camera.position.copy(camPos);
+  camera.lookAt(lookTarget);
+  
+  // Dynamic FOV
+  camera.fov = 75 + speedFactor * 15;
+  camera.updateProjectionMatrix();
+  
+  // Light follows player
+  playerLight.position.copy(player.position).add(new THREE.Vector3(0, 3, 0));
+  
+  // Render
+  renderer.render(scene, camera);
+}
+
+// Window resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+loop();
+</script>
 </body>
 </html>
